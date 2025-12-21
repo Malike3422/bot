@@ -1,11 +1,13 @@
 const mineflayer = require('mineflayer')
+const http = require('http')
 
 const config = {
-  host: 'Malike3422.aternos.me', // exemplo: meuservidor.aternos.me
+  host: 'Malike3422.aternos.me',
   port: 14066,
-  username: 'BotAFK',       // qualquer nome (server pirata)
-  version: false,          // false = detecta automático
-  reconnectDelay: 5000     // 5 segundos
+  username: 'BotAFK',
+  version: false,
+  reconnectDelay: 5000,
+  loginPassword: 'SUA_SENHA_AQUI' // 🔴 MUDE ISSO
 }
 
 let bot
@@ -26,7 +28,7 @@ function iniciarBot() {
     // Anti-AFK: pular
     setInterval(() => {
       bot.setControlState('jump', true)
-      setTimeout(() => bot.setControlState('jump', false), 300)
+      setTimeout(() => bot.setControlState('jump', false), 400)
     }, 20000)
 
     // Anti-AFK: girar a cabeça
@@ -34,10 +36,24 @@ function iniciarBot() {
       bot.look(Math.random() * Math.PI * 2, 0)
     }, 15000)
 
-    // Mensagem no chat (opcional)
+    // Anti-AFK: andar um pouco
     setInterval(() => {
-      bot.chat('Bot online 😎')
-    }, 300000) // a cada 5 minutos
+      bot.setControlState('forward', true)
+      setTimeout(() => bot.setControlState('forward', false), 1000)
+    }, 60000)
+  })
+
+  // 🔐 Login automático (AuthMe)
+  bot.on('messagestr', msg => {
+    if (msg.toLowerCase().includes('/login')) {
+      bot.chat(`/login ${config.loginPassword}`)
+      console.log('🔐 Login enviado')
+    }
+
+    if (msg.toLowerCase().includes('/register')) {
+      bot.chat(`/register ${config.loginPassword} ${config.loginPassword}`)
+      console.log('📝 Registro enviado')
+    }
   })
 
   bot.on('end', () => {
@@ -53,5 +69,11 @@ function iniciarBot() {
     console.log('⚠️ Erro:', err.message)
   })
 }
+
+// 🌐 Servidor HTTP (obrigatório para Render / UptimeRobot)
+http.createServer((req, res) => {
+  res.writeHead(200, { 'Content-Type': 'text/plain' })
+  res.end('Bot AFK online')
+}).listen(process.env.PORT || 3000)
 
 iniciarBot()
