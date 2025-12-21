@@ -6,8 +6,7 @@ const config = {
   port: 14066,
   username: 'BotAFK',
   version: false,
-  reconnectDelay: 5000,
-  loginPassword: 'SUA_SENHA_AQUI' // 🔴 MUDE ISSO
+  reconnectDelay: 5000
 }
 
 let bot
@@ -43,19 +42,6 @@ function iniciarBot() {
     }, 60000)
   })
 
-  // 🔐 Login automático (AuthMe)
-  bot.on('messagestr', msg => {
-    if (msg.toLowerCase().includes('/login')) {
-      bot.chat(`/login ${config.loginPassword}`)
-      console.log('🔐 Login enviado')
-    }
-
-    if (msg.toLowerCase().includes('/register')) {
-      bot.chat(`/register ${config.loginPassword} ${config.loginPassword}`)
-      console.log('📝 Registro enviado')
-    }
-  })
-
   bot.on('end', () => {
     console.log('❌ Bot caiu. Reconectando em 5s...')
     setTimeout(iniciarBot, config.reconnectDelay)
@@ -70,7 +56,7 @@ function iniciarBot() {
   })
 }
 
-// 🌐 Servidor HTTP (obrigatório para Render / UptimeRobot)
+// 🌐 Servidor HTTP (necessário pro Render não dormir)
 http.createServer((req, res) => {
   res.writeHead(200, { 'Content-Type': 'text/plain' })
   res.end('Bot AFK online')
