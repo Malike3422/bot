@@ -1,12 +1,11 @@
 {
   "name": "bot-aternos",
   "version": "1.0.0",
-  "description": "Bot AFK para Aternos (offline/pirata)",
   "main": "bot.js",
   "scripts": {
     "start": "node bot.js"
   },
   "dependencies": {
-    "mineflayer": "^4.33.0"
+    "mineflayer": "^4.20.0"
   }
 }
