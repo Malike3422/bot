@@ -3,7 +3,7 @@ const http = require('http')
 
 const config = {
   host: 'Malike3422.aternos.me',
-  port: 14066,
+  port: 22556,
   username: 'BotAFK',
   version: false,
   reconnectDelay: 5000
