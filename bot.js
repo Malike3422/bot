@@ -1,30 +1,65 @@
 const mineflayer = require('mineflayer')
+const http = require('http')
 
-const bot = mineflayer.createBot({
-  host: 'Malike3422.aternos.me', // IP do servidor
-  port: 25565, // porta padrão
-  username: 'NomeDoBot',
-  version: '26.1.2' // versão do servidor
-})
+const config = {
+  host: 'Malike3422.aternos.me',
+  port: 14066,
+  username: 'BotAFK',
+  version: false,
+  reconnectDelay: 5000
+}
 
-bot.on('login', () => {
-  console.log('Bot conectado!')
-})
+let bot
 
-bot.on('spawn', () => {
-  console.log('Bot entrou no servidor!')
-  bot.chat('Olá!')
-})
+function iniciarBot() {
+  console.log('🔄 Tentando conectar...')
 
-bot.on('chat', (username, message) => {
-  if (username === bot.username) return
+  bot = mineflayer.createBot({
+    host: config.host,
+    port: config.port,
+    username: config.username,
+    version: config.version
+  })
 
-  console.log(`${username}: ${message}`)
+  bot.on('spawn', () => {
+    console.log('✅ Bot conectado com sucesso!')
 
-  if (message === 'ping') {
-    bot.chat('pong')
-  }
-})
+    // Anti-AFK: pular
+    setInterval(() => {
+      bot.setControlState('jump', true)
+      setTimeout(() => bot.setControlState('jump', false), 400)
+    }, 20000)
 
-bot.on('kicked', console.log)
-bot.on('error', console.log)
+    // Anti-AFK: girar a cabeça
+    setInterval(() => {
+      bot.look(Math.random() * Math.PI * 2, 0)
+    }, 15000)
+
+    // Anti-AFK: andar um pouco
+    setInterval(() => {
+      bot.setControlState('forward', true)
+      setTimeout(() => bot.setControlState('forward', false), 1000)
+    }, 60000)
+  })
+
+  bot.on('end', () => {
+    console.log('❌ Bot caiu. Reconectando em 5s...')
+    setTimeout(iniciarBot, config.reconnectDelay)
+  })
+
+  bot.on('kicked', reason => {
+    console.log('🚫 Kickado:', reason)
+  })
+
+  bot.on('error', err => {
+    console.log('⚠️ Erro:', err.message)
+  })
+}
+
+// 🌐 Servidor HTTP (necessário pro Render não dormir)
+http.createServer((req, res) => {
+  res.writeHead(200, { 'Content-Type': 'text/plain' })
+  res.end('Bot AFK online')
+}).listen(process.env.PORT || 3000)
+
+iniciarBot()
