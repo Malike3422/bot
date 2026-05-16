@@ -4,7 +4,7 @@ const bot = mineflayer.createBot({
   host: 'Malike3422.aternos.me', // IP do servidor
   port: 25565, // porta padrão
   username: 'NomeDoBot',
-  version: '1.20.1' // versão do servidor
+  version: '26.1.2' // versão do servidor
 })
 
 bot.on('login', () => {
